@@ -66,7 +66,7 @@ done
 # Install the package
 sudo apt-get update >> /tmp/azuredeploy.log.$$ 2>&1
 sudo chmod g-w /var/log >> /tmp/azuredeploy.log.$$ 2>&1 # Must do this before munge will generate key
-sudo apt-get install slurm-wlm -y >> /tmp/azuredeploy.log.$$ 2>&1
+sudo apt-get install slurm-llnl -y >> /tmp/azuredeploy.log.$$ 2>&1
 
 # Download slurm.conf and fill in the node info
 SLURMCONF=/tmp/slurm.conf.$$
@@ -74,8 +74,8 @@ wget $TEMPLATE_BASE/slurm.template.conf -O $SLURMCONF >> /tmp/azuredeploy.log.$$
 sed -i -- 's/__MASTERNODE__/'"$MASTER_NAME"'/g' $SLURMCONF >> /tmp/azuredeploy.log.$$ 2>&1
 lastvm=`expr $NUM_OF_VM - 1`
 sed -i -- 's/__WORKERNODES__/'"$WORKER_NAME"'[0-'"$lastvm"']/g' $SLURMCONF >> /tmp/azuredeploy.log.$$ 2>&1
-sudo cp -f $SLURMCONF /etc/slurm-wlm/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
-sudo chown slurm /etc/slurm-wlm/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
+sudo cp -f $SLURMCONF /etc/slurm-llnl/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
+sudo chown slurm /etc/slurm-llnl/slurm.conf >> /tmp/azuredeploy.log.$$ 2>&1
 sudo chmod o+w /var/spool # Write access for slurmctld log. Consider switch log file to another location
 sudo -u slurm /usr/sbin/slurmctld >> /tmp/azuredeploy.log.$$ 2>&1 # Start the master daemon service
 sudo munged --force >> /tmp/azuredeploy.log.$$ 2>&1 # Start munged
@@ -106,14 +106,14 @@ do
       sudo sh -c "cat /tmp/hosts >> /etc/hosts"
       sudo chmod g-w /var/log
       sudo apt-get update
-      sudo apt-get install slurm-wlm -y
+      sudo apt-get install slurm-llnl -y
       sudo cp -f /tmp/munge.key /etc/munge/munge.key
       sudo chown munge /etc/munge/munge.key
       sudo chgrp munge /etc/munge/munge.key
       sudo rm -f /tmp/munge.key
       sudo /usr/sbin/munged --force # ignore egregrious security warning
-      sudo cp -f /tmp/slurm.conf /etc/slurm-wlm/slurm.conf
-      sudo chown slurm /etc/slurm-wlm/slurm.conf
+      sudo cp -f /tmp/slurm.conf /etc/slurm-llnl/slurm.conf
+      sudo chown slurm /etc/slurm-llnl/slurm.conf
       sudo slurmd
 ENDSSH1
 
